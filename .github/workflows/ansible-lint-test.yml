@@ -19,10 +19,10 @@ on:
       - 'roles/sap_vm_preconfigure/**'
 
 jobs:
- ansible-lint:
-   name: call-ansible-lint-with-role
-   steps:
-     - name: 'test'
-       uses: wabri/community.sap_install/.github/workflows/ansible-lint-reusable-workflow.yml@main
-       with:
-         role: sap_vm_preconfigure
+  ansible-lint:
+    name: call-ansible-lint-with-role
+    steps:
+      - name: 'test'
+        uses: wabri/community.sap_install/.github/workflows/ansible-lint-reusable-workflow.yml@main
+        with:
+          role: sap_vm_preconfigure
