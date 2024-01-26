@@ -17,6 +17,12 @@ on:
       - dev
     paths:
       - 'roles/sap_vm_preconfigure/**'
+  workflow_dispatch:
+    branches:
+      - main
+      - dev
+    paths:
+      - '**'
 
 jobs:
   call-ansible-lint-with-role:
