@@ -4,25 +4,7 @@
 
 name: test for ansible-lint reusable workflow
 
-on:
-  push:
-    branches:
-      - main
-      - dev
-    paths:
-      - 'roles/sap_vm_preconfigure/**'
-  pull_request:
-    branches:
-      - main
-      - dev
-    paths:
-      - 'roles/sap_vm_preconfigure/**'
-  workflow_dispatch:
-    branches:
-      - main
-      - dev
-    paths:
-      - '**'
+on: push
 
 jobs:
   call-ansible-lint-with-role:
