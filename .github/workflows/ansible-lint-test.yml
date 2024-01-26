@@ -1,0 +1,27 @@
+---
+
+# Workflow for ansible-lint of a role
+
+name: test
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+    paths:
+      - 'roles/sap_vm_preconfigure/**'
+  pull_request:
+    branches:
+      - main
+      - dev
+    paths:
+      - 'roles/sap_vm_preconfigure/**'
+
+jobs:
+  ansible-lint:
+    call-ansible-lint-with-role:
+        uses: sap-linuxlab/community.sap_install/.github/workflows/ansible-lint-sap_reusable_workflow.yml@main
+        with:
+          role: sap_vm_preconfigure
+ 
