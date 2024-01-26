@@ -20,7 +20,7 @@ on:
 
 jobs:
   call-ansible-lint-with-role:
-    uses: Wabri/community.sap_install/.github/workflows/ansible-lint-sap_reusable_workflow@main
+    uses: Wabri/community.sap_install/.github/workflows/ansible-lint-sap_reusable_workflow.yml@main
     with:
       role: sap_vm_preconfigure
 
