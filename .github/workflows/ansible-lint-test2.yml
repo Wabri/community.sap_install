@@ -1,0 +1,14 @@
+---
+
+# Workflow for ansible-lint of a role
+
+name: test 2 for ansible-lint reusable workflow
+
+on: push
+
+jobs:
+  call-ansible-lint-with-role:
+    uses: Wabri/community.sap_install/.github/workflows/ansible-lint-sap_reusable_workflow.yml@main
+    with:
+      role: sap_spwm_wrong
+
