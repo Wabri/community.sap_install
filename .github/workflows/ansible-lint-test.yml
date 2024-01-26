@@ -2,7 +2,7 @@
 
 # Workflow for ansible-lint of a role
 
-name: test
+name: test for ansible-lint reusable workflow
 
 on:
   push:
@@ -18,11 +18,11 @@ on:
     paths:
       - 'roles/sap_vm_preconfigure/**'
 
- jobs:
-  ansible-lint:
-    name: call-ansible-lint-with-role
-    steps:
-      - name: 'test'
-        uses: wabri/community.sap_install/.github/workflows/ansible-lint-reusable-workflow.yml@main
-        with:
-          role: sap_vm_preconfigure
+jobs:
+ ansible-lint:
+   name: call-ansible-lint-with-role
+   steps:
+     - name: 'test'
+       uses: wabri/community.sap_install/.github/workflows/ansible-lint-reusable-workflow.yml@main
+       with:
+         role: sap_vm_preconfigure
