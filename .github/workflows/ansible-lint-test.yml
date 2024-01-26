@@ -19,8 +19,8 @@ on:
       - 'roles/sap_vm_preconfigure/**'
 
 jobs:
-  ansible-lint:
-    call-ansible-lint-with-role:
-        uses: wabri/community.sap_install/.github/workflows/ansible-lint-reusable-workflow.yml@main
-        with:
-          role: sap_vm_preconfigure
+  call-ansible-lint-with-role:
+    uses: Wabri/community.sap_install/.github/workflows/ansible-lint-sap_reusable_workflow@main
+    with:
+      role: sap_vm_preconfigure
+
