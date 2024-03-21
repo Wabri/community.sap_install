@@ -75,7 +75,6 @@ main() {
                             "$package" \
                             "$version" \
                             "$latest"
-                        git status
                     fi
             fi
         fi
