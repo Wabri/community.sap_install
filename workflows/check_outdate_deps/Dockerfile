@@ -4,7 +4,10 @@ COPY check_outdate_deps.sh /check_outdate_deps.sh
 
 RUN chmod +x /check_outdate_deps.sh
 
-# needed for the open_issue.py
+# Needed for the open_issue.py
 RUN pip3 install requests
+
+# Needed to manage pull requests 
+RUN apt install git
 
 ENTRYPOINT [ "/check_outdate_deps.sh" ]
