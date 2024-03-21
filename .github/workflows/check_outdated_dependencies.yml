@@ -22,3 +22,4 @@ jobs:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REQUIREMENT_FILE: "requirements-workflow.txt"
+          OPEN_PR: "True"
