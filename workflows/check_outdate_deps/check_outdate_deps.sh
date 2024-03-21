@@ -69,7 +69,7 @@ main() {
                         "$package" \
                         "$version" \
                         "$latest"
-                    if [ "$OPEN_PR" -eq "True" ]; then
+                    if [ "$OPEN_PR" == "True" ]; then
                         ./workflows/check_outdate_deps/manage_pr.py \
                             "$REQUIREMENT_FILE" \
                             "$package" \
