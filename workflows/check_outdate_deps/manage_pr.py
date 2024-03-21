@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 
 import argparse
+import json
+import os
+
+import requests
 
 def get_title(requirement_file):
     return f"Auto-update outdated dependencies in {requirement_file}"
@@ -21,8 +25,33 @@ if __name__ == '__main__':
     parser.add_argument("latest", type=str, help='The latest version of the package')
     args = parser.parse_args()
 
-    # Compose line in file to replace
+    # Environment variable
+    token = str(os.environ.get("GITHUB_TOKEN"))
+    repo = str(os.environ.get("GITHUB_REPOSITORY"))
+    commit_sha = str(os.environ.get("GITHUB_SHA"))
+    requirement_file = str(os.environ.get("REQUIREMENT_FILE"))
+
+    # Set utility variables
+    headers = {"Authorization": f"token {token}"}
+    branch = "check_outdated_dependencies"
+
+    # Get the branches
+    response = requests.get("https://api.github.com/branches/" + branch)
+
+    # Check the response
+    if response.status_code == 404: 
+        print("The branch doesn't exist")
+
+        # Create the branch
+        refs = {"ref":"refs/heads/" + branch, "sha": commit_sha}
+        headers["Accept"] = f"application/vnd.github+json"
+        response = requests.post(f"https://api.github.com/repos/{repo}/git/refs", headers=headers, data=json.dumps(refs))
+    else:
+        print("The branch esists")
+
+    # Replace the line
     line_current = f"{args.package}=={args.version}"
     line_new = f"{args.package}=={args.latest}"
     find_replace_in_file(args.requirement_file, line_current, line_new)
 
+    # TODO: open pr if doesn't exist
