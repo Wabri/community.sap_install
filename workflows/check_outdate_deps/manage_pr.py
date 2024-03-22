@@ -5,7 +5,6 @@ import json
 import os
 import requests
 
-
 def get_title(requirement_file):
     return f"Auto-update outdated dependencies in {requirement_file}"
 
@@ -68,10 +67,11 @@ def create_commit_on_branch_with_changes(headers, repo, branch, file_to_change):
     }
 
     response = requests.post(url, headers=headers, json=data)
+    print("##################")
+    print(response)
+    print("##################")
     if response.status_code == 200:
-        result = response.json()
-        commit_url = result['data']['createCommitOnBranch']['commit']['url']
-        print(commit_url[:56])
+        print(f"Branch updated")
     else:
         print(f"Error: {response.status_code}")
 
@@ -104,5 +104,6 @@ if __name__ == '__main__':
     line_new = f"{args.package}=={args.latest}"
     find_replace_in_file(args.requirement_file, line_current, line_new)
 
+    # TODO: spot the problem here: https://github.com/Wabri/community.sap_install/actions/runs/8378748459/job/22944046135
     create_commit_on_branch_with_changes(headers, repo, branch, "test")
 
