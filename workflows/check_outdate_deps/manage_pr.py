@@ -39,7 +39,9 @@ git config --global --add safe.directory /github/workspace
 git config --global user.email "you@example.com"
 git config --global user.name "Your Name"
 git fetch --prune
+git stash push
 git checkout -b {branch} origin/{branch}
+git stash pop
 git add {file_to_change}
 git commit --message=\"Update {file_to_change}\"
 git push
