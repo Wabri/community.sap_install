@@ -13,7 +13,6 @@ def get_title(requirement_file):
 def find_replace_in_file(file_path, find_str, replace_str):
     with open(file_path, 'r') as file:
         content = file.read()
-    #content = content.replace(find_str, replace_str)
     content = re.sub(find_str, replace_str, content)
     with open(file_path, 'w') as file:
         file.write(content)
@@ -70,7 +69,7 @@ if __name__ == '__main__':
     create_branch_if_not_exists(headers, repo, branch, commit_sha)
 
     # Replace the line
-    line_current = f"{args.package}==*"
+    line_current = f"({args.package}==*)"
     line_new = f"{args.package}=={args.latest}"
     find_replace_in_file(args.requirement_file, line_current, line_new)
 
