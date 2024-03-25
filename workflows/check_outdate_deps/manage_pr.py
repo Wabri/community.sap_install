@@ -4,6 +4,7 @@ import argparse
 import json
 import os
 import requests
+import re
 
 def get_title(requirement_file):
     return f"Auto-update outdated dependencies in {requirement_file}"
@@ -12,7 +13,8 @@ def get_title(requirement_file):
 def find_replace_in_file(file_path, find_str, replace_str):
     with open(file_path, 'r') as file:
         content = file.read()
-    content = content.replace(find_str, replace_str)
+    #content = content.replace(find_str, replace_str)
+    content = re.sub(find_str, replace_str, content)
     with open(file_path, 'w') as file:
         file.write(content)
 
@@ -66,10 +68,9 @@ if __name__ == '__main__':
     create_branch_if_not_exists(headers, repo, branch, commit_sha)
 
     # Replace the line
-    line_current = f"{args.package}=={args.version}"
+    line_current = f"{args.package}==*"
     line_new = f"{args.package}=={args.latest}"
     find_replace_in_file(args.requirement_file, line_current, line_new)
 
-    # TODO: spot the problem here: https://github.com/Wabri/community.sap_install/actions/runs/8378748459/job/22944046135
     create_commit_on_branch_with_changes(branch, requirement_file)
 
