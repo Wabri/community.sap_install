@@ -19,6 +19,7 @@ def find_replace_in_file(file_path, find_str, replace_str):
 
 def create_branch_if_not_exists(headers, repo, branch, commit_sha):
     response = requests.get("https://api.github.com/branches/" + branch)
+    print(response.json())
     if response.status_code == 404: 
         refs = {"ref":"refs/heads/" + branch, "sha": commit_sha}
         headers["Accept"] = f"application/vnd.github+json"
@@ -31,51 +32,7 @@ def create_branch_if_not_exists(headers, repo, branch, commit_sha):
         print("The branch esists")
 
 def create_commit_on_branch_with_changes(headers, repo, branch, file_to_change):
-    url = 'https://api.github.com/graphql'
-    headers['Content-Type'] = 'application/json'
-
-    query = """
-    mutation ($input: CreateCommitOnBranchInput!) {
-      createCommitOnBranch(input: $input) {
-        commit {
-          url
-        }
-      }
-    }
-    """
-
-    variables = {
-        "input": {
-            "branch": {
-                "repositoryNameWithOwner": repo,
-                "branchName": branch
-            },
-            "message": {"headline": "Hello from GraphQL!"},
-            "fileChanges": {
-                "additions": [{
-                    "path": file_to_change,
-                    "contents": "`echo 'Hello, GraphQL! | base64`"
-                }],
-            },
-            "expectedHeadOid": "git rev-parse HEAD"
-        }
-    }
-
-    data = {
-        "query": query,
-        "variables": variables
-    }
-
-    response = requests.post(url, headers=headers, json=data)
-    print("##################")
-    print(response)
-    print("##################")
-    if response.status_code == 200:
-        print(f"Branch updated")
-    else:
-        print(f"Error: {response.status_code}")
-
-    # TODO: open pr if doesn't exist
+    print("test")
 
 
 if __name__ == '__main__':
