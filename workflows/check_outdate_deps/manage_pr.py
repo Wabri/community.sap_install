@@ -31,8 +31,11 @@ def create_branch_if_not_exists(headers, repo, branch, commit_sha):
         print("INFO: the branch already esists")
 
 
-def create_commit_on_branch_with_changes(headers, repo, branch, file_to_change):
-    os.system("env")
+def create_commit_on_branch_with_changes(branch, file_to_change):
+    commit_message = f"Update {file_to_change}"
+    os.system(f"git add {file_to_change}")
+    os.system(f"git commit --message=\"{commit_message}\"")
+    os.system(f"git push origin {branch}")
 
 
 if __name__ == '__main__':
@@ -62,5 +65,5 @@ if __name__ == '__main__':
     find_replace_in_file(args.requirement_file, line_current, line_new)
 
     # TODO: spot the problem here: https://github.com/Wabri/community.sap_install/actions/runs/8378748459/job/22944046135
-    create_commit_on_branch_with_changes(headers, repo, branch, "test")
+    create_commit_on_branch_with_changes(branch, requirement_file)
 
