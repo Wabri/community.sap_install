@@ -19,20 +19,20 @@ def find_replace_in_file(file_path, find_str, replace_str):
 
 def create_branch_if_not_exists(headers, repo, branch, commit_sha):
     response = requests.get(f"https://api.github.com/repos/{repo}/branches/{branch}")
-    print(response.json())
     if response.status_code == 404: 
         refs = {"ref":"refs/heads/" + branch, "sha": commit_sha}
         headers["Accept"] = f"application/vnd.github+json"
         response = requests.post(f"https://api.github.com/repos/{repo}/git/refs", headers=headers, data=json.dumps(refs))
         if response.status_code == 201: 
-            print("The branch is created with success")
+            print(f"INFO: Branch created -> https://github.com/{repo}/tree/{branch}")
         else:
-            print("Something went wrong with the creation of the branch")
+            print("ERROR: branch not created")
     else:
-        print("The branch esists")
+        print("INFO: the branch already esists")
+
 
 def create_commit_on_branch_with_changes(headers, repo, branch, file_to_change):
-    print("test")
+    os.system("env")
 
 
 if __name__ == '__main__':
