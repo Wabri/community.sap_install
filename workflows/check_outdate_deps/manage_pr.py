@@ -32,10 +32,10 @@ def create_branch_if_not_exists(headers, repo, branch, commit_sha):
 
 
 def create_commit_on_branch_with_changes(branch, file_to_change):
-    commit_message = f"Update {file_to_change}"
+    os.system(f"git checkout {branch}")
     os.system(f"git config --global --add safe.directory /github/workspace")
     os.system(f"git add {file_to_change}")
-    os.system(f"git commit --author=\"test<you@example.com>\" --message=\"{commit_message}\"")
+    os.system(f"git commit --author \"test<you@example.com>\" --message=\"Update {file_to_change}\"")
     os.system(f"git push origin {branch}")
 
 
