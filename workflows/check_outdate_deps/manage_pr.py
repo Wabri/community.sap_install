@@ -36,8 +36,10 @@ def create_commit_on_branch_with_changes(branch, file_to_change):
 git fetch --prune
 git checkout {branch}
 git config --global --add safe.directory /github/workspace
+git config --global user.email "you@example.com"
+git config --global user.name "Your Name"
 git add {file_to_change}
-git commit --author \"test<you@example.com>\" --message=\"Update {file_to_change}\"
+git commit --message=\"Update {file_to_change}\"
 git push origin {branch}
     """)
 
