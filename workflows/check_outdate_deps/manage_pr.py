@@ -33,14 +33,14 @@ def create_branch_if_not_exists(headers, repo, branch, commit_sha):
 
 def create_commit_on_branch_with_changes(branch, file_to_change):
     os.system(f"""
-git fetch --prune
-git checkout {branch}
 git config --global --add safe.directory /github/workspace
 git config --global user.email "you@example.com"
 git config --global user.name "Your Name"
+git fetch --prune
+git checkout -b {branch} origin/{branch}
 git add {file_to_change}
 git commit --message=\"Update {file_to_change}\"
-git push origin {branch}
+git push
     """)
 
 
