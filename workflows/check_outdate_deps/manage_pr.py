@@ -18,7 +18,7 @@ def find_replace_in_file(file_path, find_str, replace_str):
 
 
 def create_branch_if_not_exists(headers, repo, branch, commit_sha):
-    response = requests.get("https://api.github.com/branches/" + branch)
+    response = requests.get(f"https://api.github.com/repos/{repo}/branches/{branch}")
     print(response.json())
     if response.status_code == 404: 
         refs = {"ref":"refs/heads/" + branch, "sha": commit_sha}
