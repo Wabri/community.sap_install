@@ -56,7 +56,6 @@ main() {
     pip3 install -r "$REQUIREMENT_FILE"
     input=$(pip3 list --outdated)
     
-    
     while read -r line; do
         if [[ $line =~ ^([a-zA-Z0-9-]+)\ +([0-9]+\.[0-9]+\.[0-9]+)\ +([0-9]+\.[0-9]+\.[0-9]+)\ +([a-zA-Z]+) ]]; then
             package="${BASH_REMATCH[1]}"
@@ -69,16 +68,16 @@ main() {
                         "$package" \
                         "$version" \
                         "$latest"
-                    if [ "$OPEN_PR" == "True" ]; then
-                        ./workflows/check_outdate_deps/manage_pr.py \
-                            "$REQUIREMENT_FILE" \
-                            "$package" \
-                            "$version" \
-                            "$latest"
-                    fi
             fi
         fi
     done <<< "$input"
+    if [ "$OPEN_PR" == "True" ]; then
+        ./workflows/check_outdate_deps/manage_pr.py \
+            "$REQUIREMENT_FILE" \
+            "$package" \
+            "$version" \
+            "$latest"
+    fi
 }
 
 main "$@"
