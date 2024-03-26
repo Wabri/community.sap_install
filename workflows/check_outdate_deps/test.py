@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import argparse
 import os
 import re
 
@@ -22,16 +21,11 @@ def build_packages_dict_from_output(output):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(
-        description="Dependabot clone arguments")
-    parser.add_argument(
-        "requirement_file", type=str,
-        help='The path to the requirement file')
-    args = parser.parse_args()
+    requirement_file = str(os.environ.get("REQUIREMENT_FILE"))
 
-    os.system(f"pip3 install -r {args.requirement_file}")
+    os.system(f"pip3 install -r {requirement_file}")
     raw_output_outdated = os.system("pip3 list --outdated")
-    current_packages = build_packages_dict_from_file(args.requirement_file)
+    current_packages = build_packages_dict_from_file(requirement_file)
     latest_packages = build_packages_dict_from_output(raw_output_outdated)
 
     print("######")

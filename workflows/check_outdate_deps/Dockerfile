@@ -9,4 +9,4 @@ RUN pip3 install requests; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends git
 
-ENTRYPOINT [ "/test.py", "$REQUIREMENT_FILE" ]
+ENTRYPOINT [ "/test.py" ]
