@@ -31,4 +31,4 @@ if __name__ == '__main__':
         stdout=subprocess.PIPE)
     current_packages = build_packages_dict_from_file(requirement_file)
     latest_packages = build_packages_dict_from_output(
-        raw_output_outdated.stdout)
+        raw_output_outdated.stdout.decode('utf-8'))
