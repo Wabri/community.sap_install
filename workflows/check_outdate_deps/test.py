@@ -15,7 +15,7 @@ def build_packages_dict_from_file(requirement_file):
             regex_pattern = re.compile(
                 "([a-zA-Z0-9-]+)==([0-9]+\.[0-9]+\.[0-9]+)")
             matches = regex_pattern.findall(line)
-            packages[matches[0]] == matches[1]
+            packages[matches[0][0]] == matches[0][1]
     return packages
 
 
@@ -28,7 +28,7 @@ def build_packages_dict_from_output(output):
         regex_pattern = re.compile(
             "([a-zA-Z0-9-]+)\ +([0-9]+\.[0-9]+\.[0-9]+)\ +([0-9]+\.[0-9]+\.[0-9]+)\ +([a-zA-Z]+)")
         matches = regex_pattern.findall(line)
-        packages[matches[0]] == matches[2]
+        packages[matches[0][0]] == matches[0][2]
     return packages
 
 
