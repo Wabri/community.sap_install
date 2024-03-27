@@ -37,6 +37,7 @@ Dependency outdated in {requirement_file}:
     data = response.json()
     if data["total_count"] > 0:
         print("There is already an issue with this title!")
+        print(data)
     else:
         issue_description = f"""
         The package {package} is outdated in {requirement_file}.
@@ -56,6 +57,8 @@ Dependency outdated in {requirement_file}:
         # Check the response
         if response.status_code == 201:
             print("Issue created successfully.")
+            data = response.json()
+            print(data['number'])
         else:
             print(f"Failed to create issue. Status code: {
                   response.status_code}.")
