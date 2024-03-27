@@ -13,7 +13,8 @@ def build_packages_dict_from_file(requirement_file):
         for line in lines:
             regex_pattern = re.compile(
                 "([a-zA-Z0-9-]+)\ +([0-9]+\.[0-9]+\.[0-9]+)\ +([0-9]+\.[0-9]+\.[0-9]+)\ +([a-zA-Z]+)")
-            regex_pattern.findall(line)
+            matches = regex_pattern.findall(line)
+            print(matches)
 
 
 def build_packages_dict_from_output(output):
