@@ -12,7 +12,7 @@ def build_packages_dict_from_file(requirement_file):
         lines = file.readlines()
         for line in lines:
             regex_pattern = re.compile(
-                "([a-zA-Z0-9-]+)\ +([0-9]+\.[0-9]+\.[0-9]+)\ +([0-9]+\.[0-9]+\.[0-9]+)\ +([a-zA-Z]+)")
+                "([a-zA-Z0-9-]+)==([0-9]+\.[0-9]+\.[0-9]+)")
             matches = regex_pattern.findall(line)
             print(matches)
 
@@ -20,7 +20,12 @@ def build_packages_dict_from_file(requirement_file):
 def build_packages_dict_from_output(output):
     print("-------------")
     print("from output")
-    print(output)
+    lines = output.splitlines(output)
+    for line in lines:
+        regex_pattern = re.compile(
+            "([a-zA-Z0-9-]+)\ +([0-9]+\.[0-9]+\.[0-9]+)\ +([0-9]+\.[0-9]+\.[0-9]+)\ +([a-zA-Z]+)")
+        matches = regex_pattern.findall(line)
+        print(matches)
 
 
 if __name__ == '__main__':
