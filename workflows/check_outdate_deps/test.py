@@ -10,14 +10,13 @@ import json
 def open_issue_for_package(package, current_version, latest_version):
     repo = os.environ.get("GITHUB_REPOSITORY")
     requirement_file = str(os.environ.get("REQUIREMENT_FILE"))
-    issue_title = f"""
-Dependency outdated in {requirement_file}:
-{package}=={current_version} -> {latest_version}
-    """
+    issue_title = f"Dependency outdated in {requirement_file}: {
+        package}=={current_version} -> {latest_version}"
     query = f"repo:{repo} type:issue in:title \"{issue_title}\""
     response = requests.get(
         "https://api.github.com/search/issues", params={"q": query})
     data = response.json()
+    print(data['items'])
     if data["total_count"] > 0:
         return data['items'][0]['number']
     else:
