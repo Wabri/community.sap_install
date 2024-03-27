@@ -21,11 +21,11 @@ def open_issue_for_package(package, current_version, latest_version):
         return data['items'][0]['number']
     else:
         issue_description = f"""
-        The package {package} is outdated in {requirement_file}.
+The package {package} is outdated in {requirement_file}.
 
-        The latest version is {latest_version}. Please update the package to the latest version.
+The latest version is {latest_version}. Please update the package to the latest version.
 
-        Check the package [here](https://pypi.org/project/{package}/{latest_version}/) for more information.
+Check the package [here](https://pypi.org/project/{package}/{latest_version}/) for more information.
         """
         token = os.environ.get("GITHUB_TOKEN")
         issue = {"title": issue_title, "body": issue_description}
