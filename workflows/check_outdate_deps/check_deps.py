@@ -16,7 +16,6 @@ def open_issue_for_package(package, current_version, latest_version):
     response = requests.get(
         "https://api.github.com/search/issues", params={"q": query})
     data = response.json()
-    print(data['items'])
     if data["total_count"] > 0:
         return data['items'][0]['number']
     else:
@@ -93,16 +92,13 @@ if __name__ == '__main__':
         if package in latest_packages:
             current_version = current_packages[package]
             latest_version = latest_packages[package]
-            print(f"""
-            package: {package}
-            current: {current_version}
-            latest: {latest_version}
-            """)
             issues_number[package] = open_issue_for_package(
                 package, current_version, latest_version)
 
-            # TODO: if OPEN_PR env var is set to true than apply the changes
-            #   and open the pr
+            if os.environ.get("OPEN_PR") == "True":
+                # TODO: if OPEN_PR env var is set to true than apply the changes
+                #   and open the pr
+                pass
 
             print(f"""
             package: {package}

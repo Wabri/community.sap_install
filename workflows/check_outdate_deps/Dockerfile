@@ -1,7 +1,7 @@
 FROM python:3.12-slim
 
-COPY test.py /test.py
-RUN chmod +x /test.py
+COPY check_deps.py /check_deps.py
+RUN chmod +x /check_deps.py
 
 RUN env
 
@@ -9,4 +9,4 @@ RUN pip3 install requests; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends git
 
-ENTRYPOINT [ "/test.py" ]
+ENTRYPOINT [ "/check_deps.py" ]
