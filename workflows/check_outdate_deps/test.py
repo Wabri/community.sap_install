@@ -7,23 +7,6 @@ import requests
 import json
 
 
-def build_packages_dict_from_file(requirement_file):
-    print("-------------")
-    print("INFO: create dict from file")
-    packages = {}
-    with open(requirement_file, 'r') as file:
-        lines = file.readlines()
-        for line in lines:
-            regex_pattern = re.compile(
-                "([a-zA-Z0-9-]+)==([0-9]+\.[0-9]+\.[0-9]+)")
-            matches = regex_pattern.findall(line)
-            if len(matches) > 0:
-                package_name = str(matches[0][0])
-                package_version = str(matches[0][1])
-                packages[package_name] = package_version
-    return packages
-
-
 def open_issue_for_package(package, current_version, latest_version):
     repo = os.environ.get("GITHUB_REPOSITORY")
     requirement_file = str(os.environ.get("REQUIREMENT_FILE"))
@@ -36,8 +19,7 @@ Dependency outdated in {requirement_file}:
         "https://api.github.com/search/issues", params={"q": query})
     data = response.json()
     if data["total_count"] > 0:
-        print("There is already an issue with this title!")
-        print(data)
+        return data['items'][0]['number']
     else:
         issue_description = f"""
         The package {package} is outdated in {requirement_file}.
@@ -53,15 +35,29 @@ Dependency outdated in {requirement_file}:
             f"https://api.github.com/repos/{repo}/issues",
             headers=headers,
             data=json.dumps(issue))
-
-        # Check the response
         if response.status_code == 201:
-            print("Issue created successfully.")
-            data = response.json()
-            print(data['number'])
+            return response.json()['number']
         else:
             print(f"Failed to create issue. Status code: {
                   response.status_code}.")
+            return -1
+
+
+def build_packages_dict_from_file(requirement_file):
+    print("-------------")
+    print("INFO: create dict from file")
+    packages = {}
+    with open(requirement_file, 'r') as file:
+        lines = file.readlines()
+        for line in lines:
+            regex_pattern = re.compile(
+                "([a-zA-Z0-9-]+)==([0-9]+\.[0-9]+\.[0-9]+)")
+            matches = regex_pattern.findall(line)
+            if len(matches) > 0:
+                package_name = str(matches[0][0])
+                package_version = str(matches[0][1])
+                packages[package_name] = package_version
+    return packages
 
 
 def build_packages_dict_from_output(output):
@@ -90,6 +86,7 @@ if __name__ == '__main__':
     current_packages = build_packages_dict_from_file(requirement_file)
     latest_packages = build_packages_dict_from_output(
         raw_output_outdated.stdout.decode('utf-8'))
+    issues_number = {}
 
     print("-------------")
     print("INFO: Check outdated dependencies")
@@ -102,9 +99,15 @@ if __name__ == '__main__':
             current: {current_version}
             latest: {latest_version}
             """)
-
-            # TODO: Open Issue
-            open_issue_for_package(package, current_version, latest_version)
+            issues_number[package] = open_issue_for_package(
+                package, current_version, latest_version)
 
             # TODO: if OPEN_PR env var is set to true than apply the changes
             #   and open the pr
+
+            print(f"""
+            package: {package}
+            current: {current_version}
+            latest: {latest_version}
+            issue: {issues_number[package]}
+            """)
