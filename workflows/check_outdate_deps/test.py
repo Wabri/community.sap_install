@@ -16,8 +16,6 @@ def build_packages_dict_from_file(requirement_file):
                 "([a-zA-Z0-9-]+)==([0-9]+\.[0-9]+\.[0-9]+)")
             matches = regex_pattern.findall(line)
             if len(matches) > 0:
-                print(matches)
-                print(matches[0])
                 package_name = str(matches[0][0])
                 package_version = str(matches[0][1])
                 packages[package_name] = package_version
@@ -34,8 +32,6 @@ def build_packages_dict_from_output(output):
             "([a-zA-Z0-9-]+)\ +([0-9]+\.[0-9]+\.[0-9]+)\ +([0-9]+\.[0-9]+\.[0-9]+)\ +([a-zA-Z]+)")
         matches = regex_pattern.findall(line)
         if len(matches) > 0:
-            print(matches)
-            print(matches[0])
             package_name = str(matches[0][0])
             package_version = str(matches[0][2])
             packages[package_name] = package_version
