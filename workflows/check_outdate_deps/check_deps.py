@@ -74,7 +74,9 @@ The latest version is {latest_version}. Please update the package to the latest 
 
 Check the package [here](https://pypi.org/project/{package}/{latest_version}/) for more information.
         """
-        issue = {"title": issue_title, "body": issue_description}
+        issue = {"title": issue_title,
+                 "body": issue_description,
+                 "labels": ["automation"]}
         response = requests.post(
             f"https://api.github.com/repos/{REPOSITORY}/issues",
             headers=HEADERS,
@@ -142,7 +144,7 @@ if __name__ == '__main__':
                 package, current_version, latest_version)
 
             if OPEN_PR == "True":
-                line_current = f"({package}==*)"
+                line_current = f"{package}==[0-9]+\.[0-9]+\.[0-9]+"
                 line_latest = f"{package}=={latest_version}"
                 find_replace_in_file(REQUIREMENT_FILE,
                                      line_current,
