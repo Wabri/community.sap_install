@@ -65,7 +65,7 @@ git config --global user.email "dependencybot@linuxlab"
 git config --global user.name "DependencyBot"
 git fetch --prune
 git stash push
-git checkout -b {branch} origin/{branch}
+git checkout -b {branch} origin/{OPEN_PR_BASE}
 git stash pop
 git add {file_to_change}
 git commit --message=\"Update {file_to_change}\"
