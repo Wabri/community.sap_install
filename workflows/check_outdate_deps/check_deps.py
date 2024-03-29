@@ -29,7 +29,7 @@ def create_pull_request(branch, packages_issue):
         "base": OPEN_PR_BASE
     }
     response = requests.get(
-        f"https://api.github.com/{REPOSITORY}/pulls",
+        f"https://api.github.com/repos/{REPOSITORY}/pulls",
         headers=HEADERS)
     find_pr = (pr['title'] == pr_data['title'] for pr in response.json())
     if not any(find_pr):
