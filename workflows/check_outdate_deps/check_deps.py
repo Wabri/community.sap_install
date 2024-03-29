@@ -15,6 +15,32 @@ HEADERS = {
     "Accept": "application/vnd.github+json"
 }
 OPEN_PR = os.environ.get("OPEN_PR")
+OPEN_PR_BASE = os.environ.get("OPEN_PR_BASE")
+
+
+def create_pull_request(branch, packages_issue):
+    body = f"Bumps packages in {REQUIREMENT_FILE}."
+    for package in packages_issue:
+        body += f"\nCloses #{packages_issue[package]}"
+    pr_data = {
+        "title": "Automation: bump requirements",
+        "body": body,
+        "head": branch,
+        "base": OPEN_PR_BASE
+    }
+    response = requests.post(
+        f"https://api.github.com/repos/{REPOSITORY}/pulls",
+        headers=HEADERS,
+        data=json.dumps(pr_data))
+    if response.status_code == 201:
+        pr_number = response.json()['number']
+        print(
+            f"INFO: Pull Request -> https://github.com/{REPOSITORY}/pull/{pr_number}")
+        return pr_number
+    else:
+        print(f"ERROR: Failed to create issue. Status code: {
+                  response.status_code}.")
+        return -1
 
 
 def update_branch_with_changes(branch, file_to_change):
@@ -54,7 +80,8 @@ def create_branch_if_not_exists(branch, commit_sha):
         else:
             print("ERROR: branch not created")
     else:
-        print("INFO: the branch already esists")
+        print(
+            f"INFO: Branch -> https://github.com/{REPOSITORY}/tree/{branch}")
 
 
 def open_issue_for_package(package, current_version, latest_version):
@@ -65,7 +92,10 @@ def open_issue_for_package(package, current_version, latest_version):
         "https://api.github.com/search/issues", params={"q": query})
     data = response.json()
     if data["total_count"] > 0:
-        return data['items'][0]['number']
+        issue_number = data['items'][0]['number']
+        print(
+            f"INFO: Issue -> https://github.com/{REPOSITORY}/issues/{issue_number}")
+        return issue_number
     else:
         issue_description = f"""
 The package {package} is outdated in {REQUIREMENT_FILE}.
@@ -82,9 +112,12 @@ Check the package [here](https://pypi.org/project/{package}/{latest_version}/) f
             headers=HEADERS,
             data=json.dumps(issue))
         if response.status_code == 201:
-            return response.json()['number']
+            issue_number = response.json()['number']
+            print(
+                f"INFO: Issue created -> https://github.com/{REPOSITORY}/issues/{issue_number}")
+            return issue_number
         else:
-            print(f"Failed to create issue. Status code: {
+            print(f"ERROR: Failed to create issue. Status code: {
                   response.status_code}.")
             return -1
 
@@ -130,17 +163,17 @@ if __name__ == '__main__':
     current_packages = build_packages_dict_from_file(REQUIREMENT_FILE)
     latest_packages = build_packages_dict_from_output(
         raw_output_outdated.stdout.decode('utf-8'))
-    issues_number = {}
+    packages_issue = {}
     print("-------------")
     print("INFO: Check outdated dependencies")
     if OPEN_PR == "True":
-        branch = "automated_dependencies_bot"
+        branch = "automation/dependencies_update"
         create_branch_if_not_exists(branch, COMMIT_SHA)
     for package in current_packages.keys():
         if package in latest_packages:
             current_version = current_packages[package]
             latest_version = latest_packages[package]
-            issues_number[package] = open_issue_for_package(
+            packages_issue[package] = open_issue_for_package(
                 package, current_version, latest_version)
 
             if OPEN_PR == "True":
@@ -154,8 +187,9 @@ if __name__ == '__main__':
             package: {package}
             current: {current_version}
             latest: {latest_version}
-            issue: {issues_number[package]}
+            issue: {packages_issue[package]}
             ----------------
             """)
     if OPEN_PR == "True":
         update_branch_with_changes(branch, REQUIREMENT_FILE)
+        create_pull_request(branch, packages_issue)
