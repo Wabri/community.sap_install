@@ -23,31 +23,46 @@ def create_pull_request(branch, packages_issue):
     for package in packages_issue:
         body += f"\nCloses #{packages_issue[package]}"
     pr_data = {
-        "title": "Automation: bump requirements",
+        "title": f"Automation: update outdated packages in {REQUIREMENT_FILE}",
         "body": body,
         "head": branch,
         "base": OPEN_PR_BASE
     }
-    response = requests.post(
-        f"https://api.github.com/repos/{REPOSITORY}/pulls",
-        headers=HEADERS,
-        data=json.dumps(pr_data))
-    if response.status_code == 201:
-        pr_number = response.json()['number']
-        print(
-            f"INFO: Pull Request -> https://github.com/{REPOSITORY}/pull/{pr_number}")
-        return pr_number
+    response = requests.get(
+        f"https://api.github.com/{REPOSITORY}/pulls",
+        headers=HEADERS)
+    find_pr = (pr['title'] == pr_data['title'] for pr in response.json())
+    if not any(find_pr):
+        response = requests.post(
+            f"https://api.github.com/repos/{REPOSITORY}/pulls",
+            headers=HEADERS,
+            data=json.dumps(pr_data))
+        if response.status_code == 201:
+            pr_number = response.json()['number']
+            print(
+                f"INFO: Pull Request -> https://github.com/{REPOSITORY}/pull/{pr_number}")
+        else:
+            print(f"ERROR: Failed to create issue. Status code: {
+                      response.status_code}.")
     else:
-        print(f"ERROR: Failed to create issue. Status code: {
-                  response.status_code}.")
-        return -1
+        response = requests.patch(
+            f"https://api.github.com/repos/{REPOSITORY}/pulls/{find_pr[0]['number']}",
+            headers=HEADERS,
+            data=json.dumps(pr_data))
+        if response.status_code == 201:
+            pr_number = response.json()['number']
+            print(
+                f"INFO: Pull Request updated -> https://github.com/{REPOSITORY}/pull/{pr_number}")
+        else:
+            print(f"ERROR: Failed to update the issue. Status code: {
+                      response.status_code}.")
 
 
 def update_branch_with_changes(branch, file_to_change):
     os.system(f"""
 git config --global --add safe.directory /github/workspace
-git config --global user.email "dependencycheckbot@linuxlab"
-git config --global user.name "DependencyCheckBot"
+git config --global user.email "dependencybot@linuxlab"
+git config --global user.name "DependencyBot"
 git fetch --prune
 git stash push
 git checkout -b {branch} origin/{branch}
