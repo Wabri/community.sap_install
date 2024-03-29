@@ -32,7 +32,13 @@ def create_pull_request(branch, packages_issue):
     response = requests.get(
         f"https://api.github.com/repos/{REPOSITORY}/pulls",
         headers=HEADERS)
+    print("###################################################")
+    print(response.json())
+    print("###################################################")
     find_pr = (pr['title'] == pr_data['title'] for pr in response.json())
+    print(find_pr)
+    print("###################################################")
+    return
     if not any(find_pr):
         response = requests.post(
             f"https://api.github.com/repos/{REPOSITORY}/pulls",
