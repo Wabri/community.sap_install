@@ -16,8 +16,21 @@ HEADERS = {
 }
 OPEN_PR = os.environ.get("OPEN_PR")
 OPEN_PR_BASE = os.environ.get("OPEN_PR_BASE")
+ISSUE_AUTOCLOSE = os.environ.get("ISSUE_AUTOCLOSE")
 BRANCH = "automation/dependencies_update"
 
+def close_issue_if_old(package, current_version, latest_version):
+    issue_title_latest = f"Dependency outdated in {REQUIREMENT_FILE}: {
+        package}=={current_version} -> {latest_version}"
+    issue_title = f"Dependency outdated in {REQUIREMENT_FILE}: {
+        package}==*"
+    query = f"repo:{REPOSITORY} type:issue in:title \"{issue_title}\""
+    response = requests.get(
+        "https://api.github.com/search/issues", params={"q": query})
+    data = response.json()
+    for issue in data['items']:
+        if issue['title'] != issue_title_latest:
+            print(f"INFO: issue {issue['number']} must be remove")
 
 def create_pull_request(branch, packages_issue):
     body = f"Bumps packages in {REQUIREMENT_FILE}."
@@ -191,6 +204,9 @@ if __name__ == '__main__':
                 package, current_version, latest_version)
             # TODO: check if there is already a issue for this package with
             # old dependency version
+
+            if ISSUE_AUTOCLOSE == "True":
+                close_issue_if_old(package, current_version, latest_version)
 
             if OPEN_PR == "True":
                 line_current = f"{package}==[0-9]+\.[0-9]+\.[0-9]+"
