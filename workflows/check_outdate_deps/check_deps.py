@@ -20,7 +20,7 @@ ISSUE_AUTOCLOSE = os.environ.get("ISSUE_AUTOCLOSE")
 BRANCH = "automation/dependencies_update"
 
 def close_issue_if_old(package, current_version, latest_version):
-    issue_title = f"Dependency outdated in {REQUIREMENT_FILE}: {package}"
+    issue_title = f"Dependency outdated in {REQUIREMENT_FILE}: {package}=={current_version}"
     query = f"{issue_title} repo:{REPOSITORY} type:issue in:title"
     response = requests.get(
         "https://api.github.com/search/issues", params={"q": query})
@@ -45,9 +45,6 @@ def create_pull_request(branch, packages_issue):
         f"https://api.github.com/repos/{REPOSITORY}/pulls",
         headers=HEADERS)
     find_pr = list(pr['number'] for pr in response.json() if pr['title'] == pr_data['title'])
-    print("-------------------------------------------------------")
-    print(find_pr)
-    print("-------------------------------------------------------")
     if not any(find_pr):
         response = requests.post(
             f"https://api.github.com/repos/{REPOSITORY}/pulls",
@@ -58,19 +55,17 @@ def create_pull_request(branch, packages_issue):
             print(f"INFO: Pull Request -> https://github.com/{REPOSITORY}/pull/{pr_number}")
         else:
             print(f"ERROR: Failed to create pull request. Status code: {response.status_code}.")
-        #else:
-        #    response = requests.patch(
-        #        f"https://api.github.com/repos/{
-        #            REPOSITORY}/pulls/{find_pr[0]['number']}",
-        #        headers=HEADERS,
-        #        data=json.dumps(pr_data))
-        #    if response.status_code == 201:
-        #        pr_number = response.json()['number']
-        #        print(
-        #            f"INFO: Pull Request updated -> https://github.com/{REPOSITORY}/pull/{pr_number}")
-        #    else:
-        #        print(f"ERROR: Failed to update the pull requests. Status code: {
-        #            response.status_code}.")
+    else:
+        response = requests.patch(
+            f"https://api.github.com/repos/{
+                REPOSITORY}/pulls/{find_pr[0]}",
+            headers=HEADERS,
+            data=json.dumps(pr_data))
+        if response.status_code == 201:
+            pr_number = response.json()['number']
+            print(f"INFO: Pull Request updated -> https://github.com/{REPOSITORY}/pull/{pr_number}")
+        else:
+            print(f"ERROR: Failed to update the pull requests. Status code: {response.status_code}.")
 
 
 def update_branch_with_changes(branch, file_to_change):
