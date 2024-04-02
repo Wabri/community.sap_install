@@ -20,7 +20,7 @@ ISSUE_AUTOCLOSE = os.environ.get("ISSUE_AUTOCLOSE")
 BRANCH = "automation/dependencies_update"
 
 def close_issue_if_old(package, current_version, latest_version, new_issue_number):
-    issue_title = f"Dependency outdated in {REQUIREMENT_FILE}: {package}=="
+    issue_title = f"Dependency outdated in {REQUIREMENT_FILE}: {package}=={current_version}"
     query = f"{issue_title} repo:{REPOSITORY} type:issue in:title"
     response = requests.get(
         "https://api.github.com/search/issues", params={"q": query})
@@ -39,7 +39,7 @@ A new version of the package is out, check out the new issue #{new_issue_number}
                 f"https://api.github.com/repos/{REPOSITORY}/issues/{issue['number']}/comments",
                 headers=HEADERS,
                 data=json.dumps(comment_data))
-            if response.status_code == 201:
+            if response.status_code == 200:
                 print(f"INFO: Comment done in -> https://github.com/{REPOSITORY}/issues/{issue['number']}")
             else:
                 print(f"ERROR: Failed to create comment. Status code: {response.status_code}.")
@@ -50,7 +50,7 @@ A new version of the package is out, check out the new issue #{new_issue_number}
                 f"https://api.github.com/repos/{REPOSITORY}/issues/{issue['number']}",
                 headers=HEADERS,
                 data=json.dumps(issue_data))
-            if response.status_code == 201:
+            if response.status_code == 200:
                 print(f"INFO: Issue closed -> https://github.com/{REPOSITORY}/issues/{issue['number']}")
             else:
                 print(f"ERROR: Failed to close the issue. Status code: {response.status_code}.")
@@ -84,7 +84,7 @@ def create_pull_request(branch, packages_issue):
             f"https://api.github.com/repos/{REPOSITORY}/pulls/{find_pr[0]}",
             headers=HEADERS,
             data=json.dumps(pr_data))
-        if response.status_code == 201:
+        if response.status_code == 200:
             pr_number = response.json()['number']
             print(f"INFO: Pull Request updated -> https://github.com/{REPOSITORY}/pull/{pr_number}")
         else:
@@ -208,16 +208,15 @@ if __name__ == '__main__':
     packages_issue = {}
     if OPEN_PR == "True":
         create_branch_if_not_exists(BRANCH, COMMIT_SHA)
+    print("##### Run checks #####")
     for package in current_packages.keys():
-        print(f"""
-        ----- Check {package} -----
-        """)
+        print(f"----- Check {package} -----")
         if package in latest_packages:
             current_version = current_packages[package]
             latest_version = latest_packages[package]
             print(f"""
-            current version: {current_version}
-            latest version: {latest_version}
+INFO: current version {current_version}
+INFO: latest version {latest_version}
             """)
             packages_issue[package] = open_issue_for_package(
                 package, current_version, latest_version)
@@ -231,9 +230,7 @@ if __name__ == '__main__':
                 find_replace_in_file(REQUIREMENT_FILE,
                                      line_current,
                                      line_latest)
-            print(f"""
-            issue: {packages_issue[package]}
-            ----------------""")
+            print("----------------")
         else:
             print(f"""
             package not in scope
