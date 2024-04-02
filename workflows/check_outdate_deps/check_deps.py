@@ -20,13 +20,13 @@ ISSUE_AUTOCLOSE = os.environ.get("ISSUE_AUTOCLOSE")
 BRANCH = "automation/dependencies_update"
 
 def close_issue_if_old(package, current_version, latest_version):
-    issue_title_latest = f"Dependency outdated in {REQUIREMENT_FILE}: {
-        package}=={current_version} -> {latest_version}"
-    issue_title = f"Dependency outdated in {REQUIREMENT_FILE}: {package}=="
+    issue_title = f"Dependency outdated in {REQUIREMENT_FILE}: {package}"
     query = f"{issue_title} repo:{REPOSITORY} type:issue in:title"
     response = requests.get(
         "https://api.github.com/search/issues", params={"q": query})
     data = response.json()
+    issue_title_latest = f"Dependency outdated in {REQUIREMENT_FILE}: {
+        package}=={current_version} -> {latest_version}"
     for issue in data['items']:
         if issue['title'] != issue_title_latest:
             print(f"INFO: issue {issue['number']} must be remove")
@@ -44,7 +44,7 @@ def create_pull_request(branch, packages_issue):
     response = requests.get(
         f"https://api.github.com/repos/{REPOSITORY}/pulls",
         headers=HEADERS)
-    find_pr = (pr['title'] == pr_data['title'] for pr in response.json())
+    find_pr = list(pr['number'] for pr in response.json() if pr['title'] == pr_data['title'])
     print("-------------------------------------------------------")
     print(find_pr)
     print("-------------------------------------------------------")
