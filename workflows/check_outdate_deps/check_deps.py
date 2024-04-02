@@ -22,9 +22,8 @@ BRANCH = "automation/dependencies_update"
 def close_issue_if_old(package, current_version, latest_version):
     issue_title_latest = f"Dependency outdated in {REQUIREMENT_FILE}: {
         package}=={current_version} -> {latest_version}"
-    issue_title = f"Dependency outdated in {REQUIREMENT_FILE}: {
-        package}==*"
-    query = f"repo:{REPOSITORY} type:issue in:title \"{issue_title}\""
+    issue_title = f"Dependency outdated in {REQUIREMENT_FILE}: {package}=="
+    query = f"{issue_title} repo:{REPOSITORY} type:issue in:title"
     response = requests.get(
         "https://api.github.com/search/issues", params={"q": query})
     data = response.json()
@@ -46,6 +45,9 @@ def create_pull_request(branch, packages_issue):
         f"https://api.github.com/repos/{REPOSITORY}/pulls",
         headers=HEADERS)
     find_pr = (pr['title'] == pr_data['title'] for pr in response.json())
+    print("-------------------------------------------------------")
+    print(find_pr)
+    print("-------------------------------------------------------")
     if not any(find_pr):
         response = requests.post(
             f"https://api.github.com/repos/{REPOSITORY}/pulls",
@@ -53,24 +55,22 @@ def create_pull_request(branch, packages_issue):
             data=json.dumps(pr_data))
         if response.status_code == 201:
             pr_number = response.json()['number']
-            print(
-                f"INFO: Pull Request -> https://github.com/{REPOSITORY}/pull/{pr_number}")
+            print(f"INFO: Pull Request -> https://github.com/{REPOSITORY}/pull/{pr_number}")
         else:
-            print(f"ERROR: Failed to create pull request. Status code: {
-                response.status_code}.")
-    else:
-        response = requests.patch(
-            f"https://api.github.com/repos/{
-                REPOSITORY}/pulls/{find_pr[0]['number']}",
-            headers=HEADERS,
-            data=json.dumps(pr_data))
-        if response.status_code == 201:
-            pr_number = response.json()['number']
-            print(
-                f"INFO: Pull Request updated -> https://github.com/{REPOSITORY}/pull/{pr_number}")
-        else:
-            print(f"ERROR: Failed to update the pull requests. Status code: {
-                response.status_code}.")
+            print(f"ERROR: Failed to create pull request. Status code: {response.status_code}.")
+        #else:
+        #    response = requests.patch(
+        #        f"https://api.github.com/repos/{
+        #            REPOSITORY}/pulls/{find_pr[0]['number']}",
+        #        headers=HEADERS,
+        #        data=json.dumps(pr_data))
+        #    if response.status_code == 201:
+        #        pr_number = response.json()['number']
+        #        print(
+        #            f"INFO: Pull Request updated -> https://github.com/{REPOSITORY}/pull/{pr_number}")
+        #    else:
+        #        print(f"ERROR: Failed to update the pull requests. Status code: {
+        #            response.status_code}.")
 
 
 def update_branch_with_changes(branch, file_to_change):
@@ -105,26 +105,23 @@ def create_branch_if_not_exists(branch, commit_sha):
             f"https://api.github.com/repos/{REPOSITORY}/git/refs",
             headers=HEADERS, data=json.dumps(refs))
         if response.status_code == 201:
-            print(
-                f"INFO: Branch created -> https://github.com/{REPOSITORY}/tree/{branch}")
+            print(f"INFO: Branch created -> https://github.com/{REPOSITORY}/tree/{branch}")
         else:
             print("ERROR: branch not created")
     else:
-        print(
-            f"INFO: Branch -> https://github.com/{REPOSITORY}/tree/{branch}")
+        print(f"INFO: Branch -> https://github.com/{REPOSITORY}/tree/{branch}")
 
 
 def open_issue_for_package(package, current_version, latest_version):
     issue_title = f"Dependency outdated in {REQUIREMENT_FILE}: {
         package}=={current_version} -> {latest_version}"
-    query = f"repo:{REPOSITORY} type:issue in:title \"{issue_title}\""
+    query = f"{issue_title} repo:{REPOSITORY} type:issue in:title"
     response = requests.get(
         "https://api.github.com/search/issues", params={"q": query})
     data = response.json()
     if data["total_count"] > 0:
         issue_number = data['items'][0]['number']
-        print(
-            f"INFO: Issue -> https://github.com/{REPOSITORY}/issues/{issue_number}")
+        print(f"INFO: Issue -> https://github.com/{REPOSITORY}/issues/{issue_number}")
         return issue_number
     else:
         issue_description = f"""
@@ -143,12 +140,10 @@ Check the package [here](https://pypi.org/project/{package}/{latest_version}/) f
             data=json.dumps(issue))
         if response.status_code == 201:
             issue_number = response.json()['number']
-            print(
-                f"INFO: Issue created -> https://github.com/{REPOSITORY}/issues/{issue_number}")
+            print(f"INFO: Issue created -> https://github.com/{REPOSITORY}/issues/{issue_number}")
             return issue_number
         else:
-            print(f"ERROR: Failed to create issue. Status code: {
-                  response.status_code}.")
+            print(f"ERROR: Failed to create issue. Status code: {response.status_code}.")
             return -1
 
 
