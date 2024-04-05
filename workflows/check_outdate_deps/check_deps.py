@@ -130,17 +130,17 @@ def create_pull_request(branch, packages_issue):
         "head": branch,
         "base": OPEN_PR_BASE
     }
-    query = f"{title} repo:{REPOSITORY} type:pull-request in:title"
+    query = f"{title} repo:{REPOSITORY} type:pr in:title is:open"
     items = __search_issues(query)
     if not any(items):
         __create_pull_request(pr_data)
     elif len(items) == 1:
+        pr_number = items[0]['number']
         response = requests.patch(
-            f"https://api.github.com/repos/{REPOSITORY}/pulls/{items[0]}",
+            f"https://api.github.com/repos/{REPOSITORY}/pulls/{pr_number}",
             headers=HEADERS,
             data=json.dumps(pr_data))
         if response.status_code == 200:
-            pr_number = response.json()['number']
             print(f"INFO: Pull Request updated -> https://github.com/{REPOSITORY}/pull/{pr_number}")
         else:
             print(f"ERROR: Failed to update the pull requests. Status code: {response.status_code}.")
@@ -182,7 +182,7 @@ def create_branch_if_not_exists(branch, commit_sha):
 
 def open_issue_for_package(package, current_version, latest_version):
     issue_title = f"Dependency outdated in {REQUIREMENT_FILE}: {package}=={current_version}"
-    query = f"{issue_title} repo:{REPOSITORY} type:issue in:title"
+    query = f"{issue_title} repo:{REPOSITORY} type:issue in:title is:open"
     items = __search_issues(query)
     issue_title = f"Dependency outdated in {REQUIREMENT_FILE}: {package}=={current_version} -> {latest_version}"
     issue_description = f"""
