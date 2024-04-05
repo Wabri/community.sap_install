@@ -16,7 +16,6 @@ HEADERS = {
 }
 OPEN_PR = os.environ.get("OPEN_PR")
 OPEN_PR_BASE = os.environ.get("OPEN_PR_BASE")
-ISSUE_AUTOCLOSE = os.environ.get("ISSUE_AUTOCLOSE")
 BRANCH = "automation/dependencies_update"
 
 
@@ -111,6 +110,9 @@ def __check_if_issue_already_exists(package, current_version, latest_version):
     issue_title = f"Dependency outdated in {REQUIREMENT_FILE}: {package}=={current_version}"
     query = f"{issue_title} repo:{REPOSITORY} type:issue in:title"
     items = __search_issues(query)
+    print("######################DEBUG-START")
+    print(items[:])
+    print("######################DEBUG-END")
     issue_title_latest = f"Dependency outdated in {REQUIREMENT_FILE}: {package}=={current_version} -> {latest_version}"
     for issue in items:
         if issue['title'] != issue_title_latest:
@@ -205,6 +207,9 @@ Check the package [here](https://pypi.org/project/{package}/{latest_version}/) f
     issue = {"title": issue_title,
              "body": issue_description,
              "labels": ["automation"]}
+    print("######################DEBUG-START")
+    print(issue_number)
+    print("######################DEBUG-END")
     if issue_number > 0:
         comment = f"""
 A new version of the package is out.
