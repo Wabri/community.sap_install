@@ -1,4 +1,8 @@
 ansible==9.4.0
 ansible-compat==4.1.11
 ansible-core==2.16.5
+<<<<<<< Updated upstream
 ansible-lint==24.2.1
+=======
+ansible-lint==24.2.2
+>>>>>>> Stashed changes
