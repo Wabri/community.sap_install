@@ -16,7 +16,7 @@ jobs:
       - name: Check out the code
         uses: actions/checkout@main
         with:
-          ref: "dev"
+          ref: "main"
 
       - name: Check workflow dependencies 
         uses: ./workflows/check_outdate_deps
@@ -26,4 +26,4 @@ jobs:
           GITHUB_SHA: ${{ secrets.GITHUB_SHA }}
           REQUIREMENT_FILE: "requirements-workflow.txt"
           OPEN_PR: "True"
-          OPEN_PR_BASE: "dev"
+          OPEN_PR_BASE: "main"
