@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Apache-2.0
 ---
 __sap_ha_pacemaker_cluster_halib_package: sap-suse-cluster-connector
 
@@ -14,6 +15,15 @@ __sap_ha_pacemaker_cluster_command:
   resource_defaults_show: "crm configure show type:rsc_defaults"
   resource_defaults_update: "crm configure rsc_defaults"
   resource_restart: "crm resource restart"
+
+# Default corosync options - OS specific
+__sap_ha_pacemaker_cluster_corosync_totem_default:
+  options:
+    token: 5000
+    token_retransmits_before_loss_const: 10
+    join: 60
+    consensus: 6000
+    max_messages: 20
 
 # Make sure that there is always the minimal default fed into the included role.
 # This is combined with the custom list 'sap_ha_pacemaker_cluster_fence_agent_packages'.

@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Apache-2.0
 ---
 # Requires: ansible 2.11
 # Argument specifications in this separate file maintain backwards compatibility.
@@ -269,14 +270,6 @@ argument_specs:
         default: false
         description:
           - Set to `true` to also set NetApp NFS required kernel parameters.
-        required: false
-        type: bool
-
-      sap_hana_preconfigure_use_netapp_settings_nfsv3:
-        default: false
-        description:
-          - If `sap_hana_preconfigure_use_netapp_settings_nfs` is set to `true` and NFS Version 3 is to be used,
-          - this parameter must be set to `true` as well.
         required: false
         type: bool
 

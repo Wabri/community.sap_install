@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: Apache-2.0
 ---
 # Requires: ansible 2.11
 # Argument specifications in this separate file maintain backwards compatibility.
@@ -445,6 +446,12 @@ argument_specs:
         default: "/usr/sap/<SID>/SYS/global/hdb/custom/config/global.ini"
         description:
           - Path with location of global.ini for srHook update
+
+      sap_ha_pacemaker_cluster_saphanasr_angi_detection:
+        default: true
+        description:
+          - Disabling this variable enables to use Classic SAPHanaSR agents even on server,
+            with SAPHanaSR-angi is available.
 
       ##########################################################################
       # NetWeaver specific parameters
