@@ -1,0 +1,22 @@
+---
+
+name: Issue automation title filler
+
+on:
+  issues:
+    types:
+      - opened
+
+jobs:
+  check_outdate_dependencies:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: DEBUG
+        run: echo ${{ github.event.issue.number }}
+      #- name: Run issue filler 
+      #  uses: ./workflows/issue_filler
+      #  env:
+      #    GITHUB_REPOSITORY: ${{ github.repository }}
+      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #    GITHUB_SHA: ${{ secrets.GITHUB_SHA }}
