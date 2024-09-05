@@ -8,10 +8,10 @@ import json
 
 TOKEN = str(os.environ.get("GITHUB_TOKEN"))
 REPOSITORY = str(os.environ.get("GITHUB_REPOSITORY"))
-COMMIT_SHA = str(os.environ.get("GITHUB_SHA"))
+COMMIT_SHA = str(os.environ.get("COMMIT_SHA"))
 REQUIREMENT_FILE = str(os.environ.get("REQUIREMENT_FILE"))
 HEADERS = {
-    "Authorization": f"token {TOKEN}",
+    "Authorization": f"Bearer {TOKEN}",
     "Accept": "application/vnd.github+json"
 }
 OPEN_PR = os.environ.get("OPEN_PR")
@@ -111,6 +111,9 @@ def __create_pull_request(pr_data):
         f"https://api.github.com/repos/{REPOSITORY}/pulls",
         headers=HEADERS,
         data=json.dumps(pr_data))
+    print("#####----DEBUG--------#####")
+    print(pr_data)
+    print("#####-----------------#####")
     if response.status_code == 201:
         pr_number = response.json()['number']
         print(f"INFO: Pull Request open -> https://github.com/{REPOSITORY}/pull/{pr_number}")
@@ -228,6 +231,13 @@ Description:
 
 
 if __name__ == '__main__':
+    print("##### Environment variables #####")
+    print(REPOSITORY)
+    print(COMMIT_SHA)
+    print(REQUIREMENT_FILE)
+    print(OPEN_PR)
+    print(OPEN_PR_BASE)
+    print(BRANCH)
     print("##### Collect data #####")
     os.system(f"pip3 install -r {REQUIREMENT_FILE}")
     raw_output_outdated = subprocess.run(
