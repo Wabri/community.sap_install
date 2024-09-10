@@ -8,11 +8,12 @@ import json
 
 TOKEN = str(os.environ.get("GITHUB_TOKEN"))
 REPOSITORY = str(os.environ.get("GITHUB_REPOSITORY"))
-COMMIT_SHA = str(os.environ.get("GITHUB_SHA"))
+COMMIT_SHA = str(os.environ.get("COMMIT_SHA"))
 REQUIREMENT_FILE = str(os.environ.get("REQUIREMENT_FILE"))
 HEADERS = {
     "Authorization": f"token {TOKEN}",
-    "Accept": "application/vnd.github+json"
+    "Accept": "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2022-11-28"
 }
 OPEN_PR = os.environ.get("OPEN_PR")
 OPEN_PR_BASE = os.environ.get("OPEN_PR_BASE")
@@ -150,15 +151,20 @@ def manage_pull_request(branch, packages_issue):
 
 
 def update_branch_with_changes(branch, file_to_change):
+    print("#-----DEBUG-----#")
+    print(file_to_change)
+    print("#-----DEBUG-----#")
     os.system(f"""
 git config --global --add safe.directory /github/workspace
 git config --global user.email "dependencybot@linuxlab"
 git config --global user.name "DependencyBot"
 git fetch --prune
+git diff
 git stash push
-git checkout -b {branch} origin/{branch}
+git checkout {branch}
 git stash pop
-git checkout --theirs {REQUIREMENT_FILE}
+git diff
+git checkout --theirs {file_to_change}
 git add {file_to_change}
 git commit --message=\"Update {file_to_change} on `date`\"
 git push
